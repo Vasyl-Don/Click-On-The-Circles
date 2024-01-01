@@ -6,14 +6,16 @@ namespace Entities
     [RequireComponent(typeof(SpriteRenderer), typeof(CircleCollider2D))]
     public class Bubble : MonoBehaviour
     {
-        [SerializeField] private ProgressScriptableObject _progress;
-    
         private Sprite _sprite;
         private SpriteRenderer _spriteRenderer;
         public int _pointsValue;
 
+        private ProgressScriptableObject _progress;
+        private const string ProgressScriptableObjectPath = "Scriptables/Progress Info";
+        
         private void Awake()
         {
+            _progress = Resources.Load<ProgressScriptableObject>(ProgressScriptableObjectPath);
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
 

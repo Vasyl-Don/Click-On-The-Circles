@@ -7,13 +7,13 @@ namespace Services
 {
     public class BubbleSpawner
     {
-        private const string Path = "Prefabs/Bubble";
+        private const string PrefabPath = "Prefabs/Bubble";
         private readonly GameObject _bubblePrefab;
         private readonly List<Sprite> _sprites;
 
         public BubbleSpawner()
         {
-            _bubblePrefab = Resources.Load<GameObject>(Path);
+            _bubblePrefab = Resources.Load<GameObject>(PrefabPath);
             _sprites = Resources.LoadAll<Sprite>("Sprites/Bubbles").ToList();
         }
 

@@ -2,9 +2,8 @@
 {
     public interface IGameController
     {
-        public void OnStart();
+        public void OnAwake();
         public void OnStartPlaying();
-        public void OnUpdate();
         public void OnGameOver();
     }
 }

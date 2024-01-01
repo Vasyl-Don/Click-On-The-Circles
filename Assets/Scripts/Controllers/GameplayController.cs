@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Entities;
 using Interfaces;
@@ -11,12 +12,21 @@ namespace Controllers
     {
         private int _secondsLeft;
         
-        [SerializeField] private ProgressScriptableObject _progress;
-        [SerializeField] private GameManagerScriptableObject _gameManager;
+        private ProgressScriptableObject _progress;
+        private GameManagerScriptableObject _gameManager;
+        
+        private const string ProgressScriptableObjectPath = "Scriptables/Progress Info";
+        private const string GameManagerScriptableObjectPath = "Scriptables/Game Manager";
         
         private const float SpawningWaitTime = 0.5f;
-        
-        public void OnStart()
+
+        private void Awake()
+        {
+            _progress = Resources.Load<ProgressScriptableObject>(ProgressScriptableObjectPath);
+            _gameManager = Resources.Load<GameManagerScriptableObject>(GameManagerScriptableObjectPath);
+        }
+
+        public void OnAwake()
         {
             
         }
@@ -27,11 +37,6 @@ namespace Controllers
             _progress.ResetSecondsLeft();
             StartCoroutine(TimerCoroutine());
             StartCoroutine(SpawningBubblesCoroutine());
-        }
-    
-        public void OnUpdate()
-        {
-            
         }
 
         public void OnGameOver()

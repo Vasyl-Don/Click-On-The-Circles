@@ -17,16 +17,18 @@ namespace Controllers
         private TMP_Text _gameOverScoreText;
         private TMP_Text _highScoreText;
 
-        [SerializeField] private ProgressScriptableObject _progress;
-
+        private ProgressScriptableObject _progress;
+        private const string ProgressScriptableObjectPath = "Scriptables/Progress Info";
+        
         private void OnEnable()
         {
+            _progress = Resources.Load<ProgressScriptableObject>(ProgressScriptableObjectPath);
             _progress.SecondsLeftChanged.AddListener(UpdateTimerText);
             _progress.ScoreChanged.AddListener(UpdateScoreText);
             _progress.GameEnded.AddListener(UpdateResultsText);
         }
 
-        public void OnStart()
+        public void OnAwake()
         {
             _startCanvas = gameObject.transform.Find("Start Canvas").gameObject;
             _gameCanvas = gameObject.transform.Find("Game Canvas").gameObject;
@@ -49,11 +51,6 @@ namespace Controllers
             _gameOverCanvas.SetActive(false);
             _gameCanvas.SetActive(true);
             UpdateTimerText();
-        }
-
-        public void OnUpdate()
-        {
-            
         }
 
         public void OnGameOver()

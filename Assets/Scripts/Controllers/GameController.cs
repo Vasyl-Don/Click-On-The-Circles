@@ -6,24 +6,26 @@ using UnityEngine;
 
 namespace Controllers
 {
-    public class GameManager : MonoBehaviour
+    public class GameController : MonoBehaviour
     {
         private List<IGameController> _controllers;
         
-        [SerializeField] private GameManagerScriptableObject _gameManager;
-
+        private GameManagerScriptableObject _gameManager;
+        private const string GameManagerScriptableObjectPath = "Scriptables/Game Manager";
+        
         private void OnEnable()
         {
+            _gameManager = Resources.Load<GameManagerScriptableObject>(GameManagerScriptableObjectPath);
             _gameManager.GameStarted.AddListener(StartPlaying);
             _gameManager.GameOver.AddListener(FinishPlaying);
         }
 
-        private void Start()
+        private void Awake()
         {
             _controllers = FindObjectsOfType<MonoBehaviour>().OfType<IGameController>().ToList();
             foreach (var controller in _controllers)
             {
-                controller.OnStart();
+                controller.OnAwake();
             }
         }
         
@@ -32,14 +34,6 @@ namespace Controllers
             foreach (var controller in _controllers)
             {
                 controller.OnStartPlaying();
-            }
-        }
-        
-        private void Update()
-        {
-            foreach (var controller in _controllers)
-            {
-                controller.OnUpdate();
             }
         }
         
