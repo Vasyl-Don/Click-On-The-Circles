@@ -31,5 +31,12 @@ namespace Entities
             // play sound
             // play animation
         }
+        
+        public void PopBubble()
+        {
+            Destroy(gameObject);
+            // play sound
+            // play animation
+        }
     }
 }

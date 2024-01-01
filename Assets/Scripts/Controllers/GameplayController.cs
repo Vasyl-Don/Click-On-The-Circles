@@ -1,6 +1,8 @@
 using System.Collections;
+using Entities;
 using Interfaces;
 using ScriptableObjects;
+using Services;
 using UnityEngine;
 
 namespace Controllers
@@ -12,6 +14,8 @@ namespace Controllers
         [SerializeField] private ProgressScriptableObject _progress;
         [SerializeField] private GameManagerScriptableObject _gameManager;
         
+        private const float SpawningWaitTime = 0.5f;
+        
         public void OnStart()
         {
             
@@ -21,7 +25,8 @@ namespace Controllers
         {
             _progress.ResetScore();
             _progress.ResetSecondsLeft();
-            StartCoroutine(SpawningCirclesCoroutine());
+            StartCoroutine(TimerCoroutine());
+            StartCoroutine(SpawningBubblesCoroutine());
         }
     
         public void OnUpdate()
@@ -31,11 +36,17 @@ namespace Controllers
 
         public void OnGameOver()
         {
-            StopCoroutine(SpawningCirclesCoroutine());
+            StopCoroutine(TimerCoroutine());
+            StopCoroutine(SpawningBubblesCoroutine());
+            var bubbles = FindObjectsOfType<Bubble>();
+            foreach (var bubble in bubbles)
+            {
+                bubble.PopBubble();
+            }
             _progress.EndGame();
         }
 
-        private IEnumerator SpawningCirclesCoroutine()
+        private IEnumerator TimerCoroutine()
         {
             _secondsLeft = _progress.SecondsLimit;
             while (_secondsLeft > 0)
@@ -45,6 +56,16 @@ namespace Controllers
                 _progress.UpdateSecondsLeft();
             }
             _gameManager.FinishPlaying();
+        }
+        
+        private IEnumerator SpawningBubblesCoroutine()
+        {
+            var bubbleSpawner = new BubbleSpawner();
+            while (_secondsLeft > 0)
+            {
+                bubbleSpawner.SpawnRandomBubble();
+                yield return new WaitForSeconds(SpawningWaitTime);
+            }
         }
     }
 }
