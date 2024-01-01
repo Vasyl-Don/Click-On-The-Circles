@@ -4,7 +4,7 @@
     {
         None = 0,
         Start = 1,
-        Game = 2,
+        Playing = 2,
         GameOver = 3
     }
 }

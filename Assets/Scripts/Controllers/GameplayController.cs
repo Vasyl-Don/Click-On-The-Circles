@@ -1,31 +1,50 @@
 using System.Collections;
 using Interfaces;
+using ScriptableObjects;
 using UnityEngine;
 
-public class GameplayController : MonoBehaviour, IGameController
+namespace Controllers
 {
-    private int _score;
-    [SerializeField] private int _secondsToPlay;
-    private int _secondsPlayed;
-    
-    public void OnStartPlaying()
+    public class GameplayController : MonoBehaviour, IGameController
     {
-        StartCoroutine(SpawningCirclesCoroutine());
+        private int _secondsLeft;
         
-    }
+        [SerializeField] private ProgressScriptableObject _progress;
+        [SerializeField] private GameManagerScriptableObject _gameManager;
+        
+        public void OnStart()
+        {
+            
+        }
 
-    public void OnUpdate()
-    {
-        throw new System.NotImplementedException();
-    }
+        public void OnStartPlaying()
+        {
+            _progress.ResetScore();
+            _progress.ResetSecondsLeft();
+            StartCoroutine(SpawningCirclesCoroutine());
+        }
+    
+        public void OnUpdate()
+        {
+            
+        }
 
-    public void OnGameOver()
-    {
-        throw new System.NotImplementedException();
-    }
+        public void OnGameOver()
+        {
+            StopCoroutine(SpawningCirclesCoroutine());
+            _progress.EndGame();
+        }
 
-    private IEnumerator SpawningCirclesCoroutine()
-    {
-        yield break;
+        private IEnumerator SpawningCirclesCoroutine()
+        {
+            _secondsLeft = _progress.SecondsLimit;
+            while (_secondsLeft > 0)
+            {
+                yield return new WaitForSeconds(1f);
+                _secondsLeft--;
+                _progress.UpdateSecondsLeft();
+            }
+            _gameManager.FinishPlaying();
+        }
     }
 }

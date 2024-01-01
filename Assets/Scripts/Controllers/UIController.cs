@@ -1,4 +1,6 @@
 using Interfaces;
+using ScriptableObjects;
+using TMPro;
 using UnityEngine;
 
 namespace Controllers
@@ -9,25 +11,80 @@ namespace Controllers
         private GameObject _gameCanvas;
         private GameObject _gameOverCanvas;
 
-        public void OnStartPlaying()
+        private TMP_Text _scoreText;
+        private TMP_Text _timerText;
+
+        private TMP_Text _gameOverScoreText;
+        private TMP_Text _highScoreText;
+
+        [SerializeField] private ProgressScriptableObject _progress;
+
+        private void OnEnable()
         {
-            _startCanvas = GameObject.Find("Start Canvas");
-            _gameCanvas = GameObject.Find("Game Canvas");
-            _gameOverCanvas = GameObject.Find("Game Over Canvas");
-        
+            _progress.SecondsLeftChanged.AddListener(UpdateTimerText);
+            _progress.ScoreChanged.AddListener(UpdateScoreText);
+            _progress.GameEnded.AddListener(UpdateResultsText);
+        }
+
+        public void OnStart()
+        {
+            _startCanvas = gameObject.transform.Find("Start Canvas").gameObject;
+            _gameCanvas = gameObject.transform.Find("Game Canvas").gameObject;
+            _gameOverCanvas = gameObject.transform.Find("Game Over Canvas").gameObject;
+
+            _timerText = _gameCanvas.transform.Find("Timer Text").GetComponent<TMP_Text>();
+            _scoreText = _gameCanvas.transform.Find("Score Text").GetComponent<TMP_Text>();
+
+            _gameOverScoreText = _gameOverCanvas.transform.Find("Score Text").GetComponent<TMP_Text>();
+            _highScoreText = _gameOverCanvas.transform.Find("High Score Text").GetComponent<TMP_Text>();
+
             _startCanvas.SetActive(true);
             _gameCanvas.SetActive(false);
             _gameOverCanvas.SetActive(false);
         }
 
+        public void OnStartPlaying()
+        {
+            _startCanvas.SetActive(false);
+            _gameOverCanvas.SetActive(false);
+            _gameCanvas.SetActive(true);
+            UpdateTimerText();
+        }
+
         public void OnUpdate()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public void OnGameOver()
         {
-            throw new System.NotImplementedException();
+            _gameCanvas.SetActive(false);
+            _gameOverCanvas.SetActive(true);
+        }
+
+        private void UpdateScoreText(int score)
+        {
+            _scoreText.text = $"score\n{score}";
+        }
+        
+        private void UpdateResultsText(int finalScore, int highScore)
+        {
+            _gameOverScoreText.text = $"score\n{finalScore}";
+            _highScoreText.text = $"high score\n{highScore}";
+        }
+
+        private void UpdateTimerText()
+        {
+            var minutes = _progress.SecondsLeft / 60;
+            var seconds = _progress.SecondsLeft % 60;
+            _timerText.text = $"{minutes}:{seconds:00}";
+        }
+
+        private void OnDisable()
+        {
+            _progress.SecondsLeftChanged.RemoveListener(UpdateTimerText);
+            _progress.ScoreChanged.RemoveListener(UpdateScoreText);
+            _progress.GameEnded.RemoveListener(UpdateResultsText);
         }
     }
 }
