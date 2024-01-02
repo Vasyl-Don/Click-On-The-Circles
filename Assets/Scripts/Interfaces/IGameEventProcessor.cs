@@ -1,6 +1,6 @@
 ﻿namespace Interfaces
 {
-    public interface IGameController
+    public interface IGameEventProcessor
     {
         public void OnAwake();
         public void OnStartPlaying();

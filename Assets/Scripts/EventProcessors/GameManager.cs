@@ -4,11 +4,11 @@ using Interfaces;
 using ScriptableObjects;
 using UnityEngine;
 
-namespace Controllers
+namespace EventProcessors
 {
-    public class GameController : MonoBehaviour
+    public class GameManager : MonoBehaviour
     {
-        private List<IGameController> _controllers;
+        private List<IGameEventProcessor> _eventProcessors;
         
         private GameManagerScriptableObject _gameManager;
         private const string GameManagerScriptableObjectPath = "Scriptables/Game Manager";
@@ -22,8 +22,8 @@ namespace Controllers
 
         private void Awake()
         {
-            _controllers = FindObjectsOfType<MonoBehaviour>().OfType<IGameController>().ToList();
-            foreach (var controller in _controllers)
+            _eventProcessors = FindObjectsOfType<MonoBehaviour>().OfType<IGameEventProcessor>().ToList();
+            foreach (var controller in _eventProcessors)
             {
                 controller.OnAwake();
             }
@@ -31,7 +31,7 @@ namespace Controllers
         
         private void StartPlaying()
         {
-            foreach (var controller in _controllers)
+            foreach (var controller in _eventProcessors)
             {
                 controller.OnStartPlaying();
             }
@@ -39,7 +39,7 @@ namespace Controllers
         
         private void FinishPlaying()
         {
-            foreach (var controller in _controllers)
+            foreach (var controller in _eventProcessors)
             {
                 controller.OnGameOver();
             }

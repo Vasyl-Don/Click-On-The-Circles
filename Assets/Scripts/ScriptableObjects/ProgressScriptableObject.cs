@@ -21,6 +21,7 @@ namespace ScriptableObjects
         private void OnEnable()
         {
             Score = 0;
+            HighScore = PlayerPrefs.GetInt("HighScore", 0);
             SecondsLeft = _secondsLimit;
 
             ScoreChanged ??= new UnityEvent<int>();
@@ -43,7 +44,11 @@ namespace ScriptableObjects
         public void EndGame()
         {
             if (Score > HighScore)
+            {
                 HighScore = Score;
+                PlayerPrefs.SetInt("HighScore", Score);
+                PlayerPrefs.Save();
+            }
             GameEnded?.Invoke(Score, HighScore);
         }
 

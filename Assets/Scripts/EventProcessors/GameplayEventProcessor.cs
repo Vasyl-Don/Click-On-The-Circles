@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Entities;
 using Interfaces;
@@ -6,29 +5,24 @@ using ScriptableObjects;
 using Services;
 using UnityEngine;
 
-namespace Controllers
+namespace EventProcessors
 {
-    public class GameplayController : MonoBehaviour, IGameController
+    public class GameplayEventProcessor : MonoBehaviour, IGameEventProcessor
     {
         private int _secondsLeft;
-        
+
         private ProgressScriptableObject _progress;
         private GameManagerScriptableObject _gameManager;
-        
+
         private const string ProgressScriptableObjectPath = "Scriptables/Progress Info";
         private const string GameManagerScriptableObjectPath = "Scriptables/Game Manager";
-        
-        private const float SpawningWaitTime = 0.5f;
 
-        private void Awake()
-        {
-            _progress = Resources.Load<ProgressScriptableObject>(ProgressScriptableObjectPath);
-            _gameManager = Resources.Load<GameManagerScriptableObject>(GameManagerScriptableObjectPath);
-        }
+        private const float SpawningWaitTime = 0.5f;
 
         public void OnAwake()
         {
-            
+            _progress = Resources.Load<ProgressScriptableObject>(ProgressScriptableObjectPath);
+            _gameManager = Resources.Load<GameManagerScriptableObject>(GameManagerScriptableObjectPath);
         }
 
         public void OnStartPlaying()
@@ -43,11 +37,13 @@ namespace Controllers
         {
             StopCoroutine(TimerCoroutine());
             StopCoroutine(SpawningBubblesCoroutine());
+            
             var bubbles = FindObjectsOfType<Bubble>();
             foreach (var bubble in bubbles)
             {
-                bubble.PopBubble();
+                bubble.PopBubble(false);
             }
+
             _progress.EndGame();
         }
 
@@ -60,9 +56,10 @@ namespace Controllers
                 _secondsLeft--;
                 _progress.UpdateSecondsLeft();
             }
+
             _gameManager.FinishPlaying();
         }
-        
+
         private IEnumerator SpawningBubblesCoroutine()
         {
             var bubbleSpawner = new BubbleSpawner();

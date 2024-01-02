@@ -3,9 +3,9 @@ using ScriptableObjects;
 using TMPro;
 using UnityEngine;
 
-namespace Controllers
+namespace EventProcessors
 {
-    public class UIController : MonoBehaviour, IGameController
+    public class UIEventProcessor : MonoBehaviour, IGameEventProcessor
     {
         private GameObject _startCanvas;
         private GameObject _gameCanvas;
